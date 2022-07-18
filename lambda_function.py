@@ -88,7 +88,9 @@ def send_email(message):
 
 
 def lambda_handler(event, context):
-    send_email(to_html(filter_planes(fetch_panes())))
+    planes = filter_planes(fetch_panes())
+    if planes:
+        send_email(to_html(planes))
 
     return {
         'statusCode': 200,

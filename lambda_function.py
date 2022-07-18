@@ -74,10 +74,9 @@ def to_html(planes):
 
 def send_email(message):
     ses_client = boto3.client('ses')
-    email = os.environ['NOTIFICATION_RECIPIENT']
     send_args = {
-        'Source': email,
-        'Destination': {'ToAddresses': [email]},
+        'Source': os.environ['NOTIFICATION_SENDER'],
+        'Destination': {'ToAddresses': [os.environ['NOTIFICATION_RECIPIENT']]},
         'Message': {
             'Subject': {'Data': "Your daily plane digest"},
             'Body': {
@@ -89,11 +88,10 @@ def send_email(message):
 
 
 def lambda_handler(event, context):
-    send_email(to_html(filter_planes(fetch_panes())))
+    mail_body = to_html(filter_planes(fetch_panes()))
+    # send_email(mail_body)
 
     return {
         'statusCode': 200,
-        'body': {}
+        'body': mail_body
     }
-
-print(to_html(filter_planes(fetch_panes())))

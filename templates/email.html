@@ -1,0 +1,11 @@
+<table>
+{% for plane in planes %}
+  <tr>
+    <td><img src="{{ plane.preview  }}" /></td>
+    <td>{{ plane.title }}</td>
+    <td>{{ plane.price }}</td>
+    <td><a href="{{ plane.details }}">Details</a></td>
+  </tr>
+{% endfor %}
+</table>
+

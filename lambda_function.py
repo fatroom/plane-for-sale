@@ -1,5 +1,7 @@
 import requests
+import datetime
 from bs4 import BeautifulSoup
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 HOST = "https://www.planecheck.com"
 URL = HOST + "/aspseld.asp"
@@ -35,15 +37,30 @@ for row in planes_rows:
 
   planes.append({
     "post_date": date,
-    "plane": title,
+    "title": title,
     "price": price,
     "country": country,
     "url": details,
     "preview": img
   })
 
+# filter out planes without specified price 
 planes = filter(lambda plane: plane["price"] != None, planes)
 
-for plane in planes:
-  print(plane)
+# filter out non german planes
+planes = filter(lambda plane: plane["country"] == 'Germany', planes)
+
+# filter out posts older than 2 days
+max_post_date = datetime.timedelta(days=2)
+today_date = datetime.datetime.now()
+planes = filter(lambda plane: (today_date - datetime.datetime.strptime(plane["post_date"], '%d-%m-%Y')) < max_post_date, planes)
+
+
+# format template
+env = Environment(
+    loader=FileSystemLoader("templates"),
+    autoescape=select_autoescape()
+)
+template = env.get_template("email.html")
+print(template.render(planes=planes))
 

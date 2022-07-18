@@ -88,10 +88,9 @@ def send_email(message):
 
 
 def lambda_handler(event, context):
-    mail_body = to_html(filter_planes(fetch_panes()))
-    # send_email(mail_body)
+    send_email(to_html(filter_planes(fetch_panes())))
 
     return {
         'statusCode': 200,
-        'body': mail_body
+        'body': {}
     }
